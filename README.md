@@ -1,1 +1,1 @@
-# ThinkMate-{Collaborative Study Platform}
+# ThinkMate-Collaborative Study Platform
