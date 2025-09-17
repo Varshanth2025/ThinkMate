@@ -1,0 +1,17 @@
+{% extends 'main.html' %}
+{% block content %}
+<h1>{{user.username}}</h1>
+
+<div class="grid grid-cols-[1fr_3fr_1fr] gap-4">
+    <div>
+                {%  include 'base/topics_component.html' %}
+
+    </div>
+    <div>
+        {%  include 'base/feed_component.html' %}
+    </div>
+    <div>
+                {%  include 'base/activity_component.html' %}
+    </div>
+</div>
+{% endblock  %}
