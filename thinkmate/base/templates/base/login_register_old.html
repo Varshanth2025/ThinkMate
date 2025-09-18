@@ -1,0 +1,58 @@
+{% extends 'main.html' %} {% block content %}
+{% if page == 'login' %}
+<div>
+  <form action="" method="post">
+    {% csrf_token %}
+    <label>Username</label>
+    <input type="text" name="username" placeholder="Enter the Username" />
+    <label>Password</label>
+    <input type="password" name="password" placeholder="Enter the Username" />
+    <button type="submit" style="
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+">Login</button>
+  </form>
+  <p>Haven't Registered yet?</p>
+<a href="{% url 'register' %}" style="
+    display: inline-block;
+    padding: 6px 15px;
+    background-color: rgb(240, 240, 95);
+    color: black;
+    border: none;
+    border-radius: 5px;
+    margin-top: 5px;
+    cursor: pointer;
+    font-size: 16px;">Register</a>
+</div>
+{% else %}
+<div>
+  <form action="" method="post">
+    {% csrf_token %}
+    {{form.as_p}}
+    <button type="submit" style="
+    padding: 10px 20px;
+    background-color: rgb(240, 240, 95);
+    color: black;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+">Register</button>
+  </form>
+  <p>Already Registered ?</p>
+  <a  href="{% url 'login' %}"style="padding: 10px 20px;
+    display: inline-block;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;" >Login</a>
+</div>
+{% endif %}
+{% endblock %}
