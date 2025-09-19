@@ -16,9 +16,18 @@
 
         <form class="form" action="" method="POST">
           {% csrf_token %}
+          {% if form.non_field_errors %}
+          <div class="form__errors">
+            <ul>
+              {% for error in form.non_field_errors %}
+              <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+          {% endif %}
           <div class="form__group form__group">
-            <label for="room_name">Username</label>
-            <input id="username" name="username" type="text" placeholder="e.g. rock18" />
+            <label for="room_name">Email</label>
+            <input id="username" name="email" type="email" placeholder="e.g. rock@gmail.com" />
           </div>
           <div class="form__group">
             <label for="password">Password</label>
@@ -61,11 +70,29 @@
 
         <form class="form" action="" method="POST">
           {% csrf_token %}
+          {% if form.non_field_errors %}
+          <div class="form__errors">
+            <ul>
+              {% for error in form.non_field_errors %}
+              <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+          {% endif %}
 
           {% for field in form %}
           <div class="form__group form__group">
             <label for="room_name">{{field.label}}</label>
             {{field}}
+            {% if field.errors %}
+            <div class="field__errors">
+              <ul>
+                {% for error in field.errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+            {% endif %}
           </div>
           {% endfor %}
 
@@ -86,8 +113,8 @@
         </form>
 
         <div class="auth__action">
-          <p>Already signed up yet bitch?</p>
-          <a href="{% url 'login' %}" class="btn btn--link">Sign Up</a>
+          <p>Already signed up ?</p>
+          <a href="{% url 'login' %}" class="btn btn--link">Login</a>
         </div>
       </div>
     </div>

@@ -1,32 +1,30 @@
 from django.shortcuts import render,redirect
-from .models import Room,Topic,Message
+from .models import Room,Topic,Message,User
 from django.db.models import Q
-from .forms import RoomForm,UserForm
-from django.http import HttpResponse
+from .forms import RoomForm,UserForm,CustomUserCreationForm
+from django.http import HttpResponseForbidden
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.contrib import messages
-from django.contrib.auth.forms import UserCreationForm
 
 def LoginPage(request):
     page='login'    
     if request.user.is_authenticated:
         return redirect('home')
     if request.method=='POST':
-        name=request.POST.get('username')
+        email=request.POST.get('email')
         password=request.POST.get('password')
 
         try:
-            user=User.objects.get(username=name)
+            user=User.objects.get(email=email)
         except:
             messages.error(request, "User does not exist ")   
-        user=authenticate(request,username=name,password=password)    
+        user = authenticate(request, email=email, password=password)
         if user:
-            login(request,user)
+            login(request, user)
             return redirect('home')
         else:
-            messages.error(request,"password does not exist")
+            messages.error(request, "Invalid email or password")
 
     context={'page':page}
     return render(request,'base/login_register.html',context)
@@ -38,17 +36,16 @@ def LogoutPage(request):
     return redirect('login')
 
 def RegisterPage(request):
-    form=UserForm()
+    form=CustomUserCreationForm()
     if request.method =='POST':
-        form=UserCreationForm(request.POST)
+        form=CustomUserCreationForm(request.POST)
         if form.is_valid():
             user=form.save(commit=False)
-            user.username=user.username.lower()
+            if user.username:
+                user.username = user.username.lower()
             user.save()
             login(request,user)
             return redirect('home')
-        else:
-            messages.error(request,"An error occurred please try again")
 
     return render(request,'base/login_register.html',{'form':form})
 
@@ -76,23 +73,26 @@ def userProfile(request,pk):
     context={"user":user,"rooms":rooms,"room_messages":room_messages,"topics":topics}
     return render(request,"base/profile.html",context)
 
+
 def room(request,pk):
-    room=Room.objects.get(id=pk)
-    room_Messages=room.message_set.all()
-    participants=room.participants.all()
-    if request.method=="POST":
-        body=request.POST.get('body')
+    room = Room.objects.get(id=pk)
+    room_messages = room.message_set.all()
+    participants = room.participants.all()
+    if request.method == "POST":
+        if not request.user.is_authenticated:
+            return redirect('login')
+        body = request.POST.get('body')
         if body:
             Message.objects.create(
-            user=request.user,
-            room=room,
-            body=body
-                    )
+                user=request.user,
+                room=room,
+                body=body
+            )
             room.participants.add(request.user)
-            return redirect('room',pk=room.id)
+            return redirect('room', pk=room.id)
 
-    context={"room":room,"room_messages":room_Messages,"participants":participants}
-    return render(request,"base/room.html",context)
+    context = {"room": room, "room_messages": room_messages, "participants": participants}
+    return render(request, "base/room.html", context)
 
 
 
@@ -121,7 +121,7 @@ def update_room(request,pk):
     room=Room.objects.get(id=pk)
     form=RoomForm(instance=room)
     if request.user!=room.host:
-        return HttpResponse("You are not allowed to do this")
+        return HttpResponseForbidden("You are not allowed to do this")
 
     if request.method=="POST":
         topic_name=request.POST.get('topic')
@@ -139,7 +139,7 @@ def delete_room(request,pk):
      
      room=Room.objects.get(id=pk)
      if request.user!=room.host:
-        return HttpResponse("You are not allowed to do this")
+        return HttpResponseForbidden("You are not allowed to do this")
      if request.method=="POST":
          room.delete()
          return redirect("home")
@@ -152,7 +152,7 @@ def deleteMessage(request,pk):
     message=Message.objects.get(id=pk)
 
     if request.user!=message.user:
-        return HttpResponse('you are not allowed here!!')
+        return HttpResponseForbidden('you are not allowed here!!')
     if request.method=="POST":
         message.delete()
         return redirect('home')
