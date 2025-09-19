@@ -6,6 +6,10 @@ from django.http import HttpResponseForbidden
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.core.mail import send_mail
+from django.core.mail import EmailMessage
+from think.settings import EMAIL_HOST_USER
+
 
 def LoginPage(request):
     page='login'    
@@ -36,19 +40,25 @@ def LogoutPage(request):
     return redirect('login')
 
 def RegisterPage(request):
-    form=CustomUserCreationForm()
-    if request.method =='POST':
-        form=CustomUserCreationForm(request.POST)
+    form = CustomUserCreationForm()
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            user=form.save(commit=False)
+            user = form.save(commit=False)
             if user.username:
                 user.username = user.username.lower()
             user.save()
-            login(request,user)
+            login(request, user)
+
+            subject = "Welcome to Thinkmate 🎉"
+            message = f"Hi {user.username},\n\nThanks for registering at Thinkmate. We're glad to have you onboard!\n\nHappy learning 🚀"
+            from_email = EMAIL_HOST_USER
+            recipient_list = [user.email]
+            send_mail(subject, message, from_email, recipient_list, fail_silently=False)
+
             return redirect('home')
 
-    return render(request,'base/login_register.html',{'form':form})
-
+    return render(request, 'base/login_register.html', {'form': form})
 
 
 
