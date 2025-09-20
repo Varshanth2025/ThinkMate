@@ -25,7 +25,7 @@ A high-performance collaborative study platform built with Django and Django RES
   - Middleware for security and session management
   - Efficient ORM for scalable data handling
 
-- **SQLite (default) / PostgreSQL (recommended for production)**
+- **SQLite (default) and PostgreSQL (for production)**
   - Reliable relational data storage
   - Easy migration and scaling
 
