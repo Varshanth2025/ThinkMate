@@ -118,13 +118,13 @@ python manage.py runserver
 <p align="center">
    Home
 </p>
-<img src="https://github.com/Varshanth2025/ThinkMate/blob/main/thinkmate/static/images/home_page.png">
+<img src="https://github.com/Varshanth2025/ThinkMate/blob/main/thinkmate/static/images/home.png">
 </td> 
 <td width="50%">
 <br>
 <p align="center">
   Room Conversation Preview
 </p>
-<img src="https://github.com/Varshanth2025/ThinkMate/blob/main/thinkmate/static/images/chat_room.png">  
+<img src="https://github.com/Varshanth2025/ThinkMate/blob/main/thinkmate/static/images/room_conversation.png">  
 </td>
 </table>
