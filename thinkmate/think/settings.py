@@ -9,9 +9,8 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+import os
 from pathlib import Path
-from decouple import config
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,12 +19,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-b6_)7s^xudk8g0=c^a=&6-vcu-zix7(lf1!6t8+=@v5)#ga_2s'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
-ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -84,17 +79,24 @@ WSGI_APPLICATION = 'think.wsgi.application'
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'Thinkmate',      # your database name
-        'USER': 'postgres',       # your postgres username
-        'PASSWORD': '1234',  # your postgres password
-        'HOST': 'localhost',      # or the IP/domain of your DB server
-        'PORT': '5432',           # default PostgreSQL port
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST'),
+        'PORT': os.environ.get('DB_PORT', '5432'),  # default PostgreSQL port
     }
 }
+TIME_ZONE = 'Asia/Kolkata'
+USE_TZ = True  # recommended to keep this True
 
+SECRET_KEY = os.environ.get('SECRET_KEY', 'fallback-secret-key')
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost').split(',')
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -119,11 +121,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
-USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
@@ -145,10 +145,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"      
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False
-EMAIL_HOST_USER = config("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
+EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True') == 'True'
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')

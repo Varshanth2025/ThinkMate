@@ -6,6 +6,7 @@ chardet==5.2.0
 charset-normalizer==3.4.3
 click==8.1.8
 cookiecutter==2.6.0
+dj-database-url==3.0.1
 Django==4.2.23
 django-tailwind==3.6.0
 djangorestframework==3.16.1
